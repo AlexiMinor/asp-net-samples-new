@@ -1,0 +1,16 @@
+﻿@model SendDataUsingFormSampleModel
+<h3>Some title</h3>
+
+<form method="post" asp-action="Do" asp-controller="Test">
+    <div>
+        <label>Email:</label>
+        <input type="email" asp-for="Email"/>
+    </div>
+    <div>
+        <label>Password:</label>
+        <input type="password" asp-for="Password"/>
+    </div>
+    <div>
+        <input type="submit" value="Confirm"/>
+    </div>
+</form>

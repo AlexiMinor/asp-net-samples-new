@@ -1,0 +1,16 @@
+
+console-ef-samples/EntityFrameworkConsoleSample/.vs/
+
+console-ef-samples/EntityFrameworkConsoleSample/EntityFrameworkConsoleSample/bin/
+
+console-ef-samples/EntityFrameworkConsoleSample/EntityFrameworkConsoleSample/obj/
+
+AspNetSamples/.vs/
+
+AspNetSamples/AspNetSamples.Mvc/bin/
+
+AspNetSamples/AspNetSamples.Mvc/obj/
+
+AspNetSamples/AspNetSamples.Data/bin/
+
+AspNetSamples/AspNetSamples.Data/obj/

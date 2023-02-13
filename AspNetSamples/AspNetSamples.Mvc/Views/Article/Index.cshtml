@@ -1,0 +1,35 @@
+﻿@model List<AspNetSamples.Data.Entities.Article>
+@{
+    var x = 0;
+    var y = 1;
+    //Layout = null;
+
+    // Views/ControllerName/_Layout.cshtml- looking first
+    // Views/Shared/_Layout.cshtml - looking after
+}
+
+<div>
+    @foreach (var el in Model)
+    {
+        <div>
+            <b>@el.Id</b> - @el.Title
+        </div>
+    }
+</div>
+
+@*@if (true)
+{
+    @: Hello world
+}
+*@
+@*
+Razor:
+-> one row sentence     
+    <b>@el.Key</b> - @el.Value
+    <p>@(20+10)</p>
+    
+-> many row sentence
+    @{
+    
+    }
+*@
