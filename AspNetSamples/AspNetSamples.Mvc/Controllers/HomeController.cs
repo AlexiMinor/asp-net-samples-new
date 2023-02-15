@@ -28,5 +28,21 @@ namespace AspNetSamples.Mvc.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        private void Do(int[] arr)
+        {
+            foreach (var i in arr)
+            {
+                Console.WriteLine(i);
+            }
+        }
+
+        private void Do(IEnumerable<int> arr)
+        {
+            foreach (var i in arr)
+            {
+                Console.WriteLine(i);
+            }
+        }
     }
 }

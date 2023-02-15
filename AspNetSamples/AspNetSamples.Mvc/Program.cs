@@ -1,3 +1,5 @@
+using AspNetSamples.Abstractions.Services;
+using AspNetSamples.Business;
 using AspNetSamples.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -17,9 +19,12 @@ namespace AspNetSamples.Mvc
                     .GetConnectionString("DefaultConnection");
                 opt.UseSqlServer(connString);
             });
+
+            builder.Services.AddTransient<IArticleService, ArticleService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

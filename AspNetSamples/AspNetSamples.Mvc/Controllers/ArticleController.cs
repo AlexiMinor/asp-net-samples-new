@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using AspNetSamples.Abstractions.Services;
+using AspNetSamples.Business;
 using AspNetSamples.Data;
 using AspNetSamples.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -8,31 +10,40 @@ namespace AspNetSamples.Mvc.Controllers
 {
     public class ArticleController : Controller
     {
-        private readonly NewsAggregatorContext _dbContext;
+        private readonly IArticleService _articleService;
 
-        public ArticleController(NewsAggregatorContext dbContext)
+
+        public ArticleController(IArticleService articleService)
         {
-            _dbContext = dbContext;
+            _articleService = articleService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var data = await _dbContext.Articles.ToListAsync();
+            var articles = 
+                (await _articleService.GetArticlesWithSourceAsync())
+                .Select(article => new ArticlePreviewModel
+                {
+                    Id = article.Id,
+                    ShortDescription = article.ShortDescription,
+                    Title = article.Title,
+                    SourceName = article.Source.Name
+                })
+                .ToList(); 
+
             if (Request.Query.ContainsKey("ad"))
             {
                 var adSource = Request.Query["ad"];
             }
-            return View(data);
+            return View(articles);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details([FromQuery]ArticleSearchModel searchData)
+        public async Task<IActionResult> Details([FromRoute]ArticleSearchModel searchData)
         {
-            var article = await _dbContext.Articles
-                .FirstOrDefaultAsync(a => a.Id.Equals(searchData.Id));
+            var article = await _articleService.GetArticleByIdAsync(searchData.Id);
 
-
-            return article == null
+            return article != null
                 ? View(article) 
                 : NotFound();
         }

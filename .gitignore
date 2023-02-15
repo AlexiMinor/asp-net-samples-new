@@ -14,3 +14,11 @@ AspNetSamples/AspNetSamples.Mvc/obj/
 AspNetSamples/AspNetSamples.Data/bin/
 
 AspNetSamples/AspNetSamples.Data/obj/
+
+AspNetSamples/AspNetSamples.Abstractions/bin/
+
+AspNetSamples/AspNetSamples.Abstractions/obj/
+
+AspNetSamples/AspNetSamples.Business/bin/
+
+AspNetSamples/AspNetSamples.Business/obj/
