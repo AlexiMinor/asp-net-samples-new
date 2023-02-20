@@ -1,6 +1,7 @@
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Business;
 using AspNetSamples.Data;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -11,6 +12,12 @@ namespace AspNetSamples.Mvc
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>()
+            {
+                {"User1","Bob"},
+                {"User2","Alice"},
+            });
 
             builder.Services.AddDbContext<NewsAggregatorContext>(
                 opt =>
@@ -44,7 +51,13 @@ namespace AspNetSamples.Mvc
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}/");
+                pattern: "{controller=Home}/{action=Index}/{id:int?}/");
+
+            app.MapControllerRoute(
+                name: "name",
+                pattern: "api/{controller}/{action}/{name}/{age?}",
+                constraints: new {age = new IntRouteConstraint()}
+                );
 
             app.Run();
         }

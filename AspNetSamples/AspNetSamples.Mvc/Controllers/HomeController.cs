@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace AspNetSamples.Mvc.Controllers
 {
+    //[Route("Main")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,16 +14,19 @@ namespace AspNetSamples.Mvc.Controllers
             _logger = logger;
         }
 
+        //[Route("index")]
         public IActionResult Index()
         {
             return View();
         }
 
+        [Route("Privacy/general")]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [Route("error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

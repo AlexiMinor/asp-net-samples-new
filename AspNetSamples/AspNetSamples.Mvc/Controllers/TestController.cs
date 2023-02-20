@@ -6,6 +6,13 @@ namespace AspNetSamples.Mvc.Controllers;
 //[NonController]
 public class TestController : Controller
 {
+    private IConfiguration _configuration;
+
+    public TestController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     public IActionResult Index()
     {
         //Bad Practices
@@ -37,5 +44,25 @@ public class TestController : Controller
 
         return Ok();
     }
-    
+
+
+    [HttpGet]
+    public IActionResult Config()
+    {
+        var connString = _configuration.GetConnectionString("DefaultConnection");
+        var secretKey = _configuration["Secrets:Key"];
+        var name1 = _configuration["User1"];
+        var name2 = _configuration["User2"];
+
+        var model = new ConfigTestModel()
+        {
+            ConnectionString = connString,
+            SecretKey = secretKey,
+            User1 = name1,
+            User2 = name2,
+
+        };
+
+        return View(model);
+    }
 }
