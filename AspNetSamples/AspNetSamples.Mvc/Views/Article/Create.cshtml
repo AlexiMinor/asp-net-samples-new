@@ -1,0 +1,29 @@
+﻿@model CreateArticleModel
+
+<h3>Create article</h3>
+
+<form asp-action="Create" asp-controller="Article" asp-antiforgery="true" method="post">
+    <div class="mb-3">
+        <label class="form-label" asp-for="Title">Title</label>
+        <input class="form-control" type="text" asp-for="Title" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="ShortDescription">Short Description</label>
+        <textarea class="form-control" rows="5" asp-for="ShortDescription"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="FullText">Text</label>
+        <textarea class="form-control" rows="10" asp-for="FullText"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="SourceId">Source</label>
+        <select class="form-select" asp-for="SourceId" asp-items="@Model.AvailableSources"></select>
+    </div>
+    <input type="hidden" asp-for="AvailableSources"/>
+    <div>
+        <input type="submit" value="Confirm" />
+    </div>
+</form>
+
+
+

@@ -1,4 +1,4 @@
-﻿@model List<ArticlePreviewModel>
+﻿@model ArticlesWithPaginationModel
 @{
     var x = 0;
     var y = 1;
@@ -8,8 +8,10 @@
     // Views/Shared/_Layout.cshtml - looking after
 }
 
+<a href="~/article/create">Create</a>
+
 <div>
-    @foreach (var el in Model)
+    @foreach (var el in Model.ArticlePreviews)
     {
         <div>
             <b>@el.Id</b> - @el.Title
@@ -23,6 +25,13 @@
         <hr/>
     }
 </div>
+
+<pagination page-info="Model.PageInfo" page-action="Index">
+    <p>1123123123123123123</p>
+</pagination>
+
+
+@*@Html.Pagination(0, 10)*@
 
 @*@if (true)
 {

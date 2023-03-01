@@ -6,5 +6,8 @@ namespace AspNetSamples.Abstractions.Services
     {
         Task<List<Article>> GetArticlesWithSourceAsync();
         Task<Article> GetArticleByIdAsync(int id);
+        Task<int> AddAsync(Article article);
+        Task<int> GetTotalArticlesCountAsync();
+        IQueryable<Article> GetArticlesWithSourceNoTrackingAsQueryable();
     }
 }

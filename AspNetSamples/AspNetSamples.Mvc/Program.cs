@@ -28,6 +28,7 @@ namespace AspNetSamples.Mvc
             });
 
             builder.Services.AddTransient<IArticleService, ArticleService>();
+            builder.Services.AddTransient<ISourceService, SourceService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             

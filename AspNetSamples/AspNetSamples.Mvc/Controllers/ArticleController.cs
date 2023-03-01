@@ -2,8 +2,10 @@
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Business;
 using AspNetSamples.Data;
+using AspNetSamples.Data.Entities;
 using AspNetSamples.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetSamples.Mvc.Controllers
@@ -11,31 +13,62 @@ namespace AspNetSamples.Mvc.Controllers
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
+        private readonly ISourceService _sourceService;
+        private readonly IConfiguration _configuration;
 
-
-        public ArticleController(IArticleService articleService)
+        public ArticleController(IArticleService articleService, 
+            ISourceService sourceService, 
+            IConfiguration configuration)
         {
             _articleService = articleService;
+            _sourceService = sourceService;
+            _configuration = configuration;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(int page=1)
         {
-            var articles = 
-                (await _articleService.GetArticlesWithSourceAsync())
-                .Select(article => new ArticlePreviewModel
-                {
-                    Id = article.Id,
-                    ShortDescription = article.ShortDescription,
-                    Title = article.Title,
-                    SourceName = article.Source.Name
-                })
-                .ToList(); 
-
-            if (Request.Query.ContainsKey("ad"))
+            var totalArticlesCount = await _articleService.GetTotalArticlesCountAsync();
+        
+            if (int.TryParse(_configuration["Pagination:Articles:DefaultPageSize"], out var pageSize))
             {
-                var adSource = Request.Query["ad"];
+                var pageInfo = new PageInfo()
+                {
+                    PageSize = pageSize,
+                    PageNumber = page,
+                    TotalItems = totalArticlesCount
+                };
+
+                var articles = await _articleService
+                    .GetArticlesWithSourceNoTrackingAsQueryable()
+                    //.OrderBy(article => article.Id)    
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(article => new ArticlePreviewModel
+                    {
+                        Id = article.Id,
+                        ShortDescription = article.ShortDescription,
+                        Title = article.Title,
+                        SourceName = article.Source.Name
+                    })
+                    .ToListAsync();
+
+
+                //if (Request.Query.ContainsKey("ad"))
+                //{
+                //    var adSource = Request.Query["ad"];
+                //}
+                return View(new ArticlesWithPaginationModel()
+                {
+                    ArticlePreviews = articles,
+                    PageInfo = pageInfo
+                });
             }
-            return View(articles);
+
+            else
+            {
+                return StatusCode(500, new { Message = "Can't read configuration data" });
+            }
         }
 
         [HttpGet]
@@ -46,6 +79,32 @@ namespace AspNetSamples.Mvc.Controllers
             return article != null
                 ? View(article) 
                 : NotFound();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new CreateArticleModel()
+            {
+                AvailableSources = (await _sourceService.GetSourcesAsync())
+                    .Select(source => new SelectListItem(source.Name, source.Id.ToString()))
+                    .ToList()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateArticleModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _articleService.AddAsync(Convert(model));
+                return RedirectToAction("Index", "Article");
+            }
+            else
+            {
+                return View(model);
+            }
         }
 
         //[HttpGet]
@@ -59,5 +118,18 @@ namespace AspNetSamples.Mvc.Controllers
 
         //    return Content(sb.ToString());
         //}
+
+
+        private Article Convert(CreateArticleModel model)
+        {
+            var entity = new Article
+            {
+                Title = model.Title,
+                SourceId = model.SourceId,
+                ShortDescription = model.ShortDescription,
+                FullText = model.FullText
+            };
+            return entity;
+        }
     }
 }

@@ -1,0 +1,26 @@
+﻿@model CreateSourceModel
+
+@{
+    var x = 0;
+    x++;
+}
+
+<h3>Create Source</h3>
+
+<form asp-action="Create" asp-controller="Source" asp-antiforgery="true" method="post">
+    <div asp-validation-summary="All"></div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Name">Name</label>
+        <input class="form-control" type="text" asp-for="Name"/>
+        <span asp-validation-for="Name"></span>
+
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="SourceUrl">SourceUrl</label>
+        <input class="form-control" asp-for="SourceUrl"></input>
+    </div>
+
+    <div>
+        <input type="submit" value="Confirm"/>
+    </div>
+</form>

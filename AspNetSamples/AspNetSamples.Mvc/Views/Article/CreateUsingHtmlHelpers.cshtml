@@ -1,0 +1,28 @@
+﻿@model CreateArticleModel
+
+<h3>Create article</h3>
+
+@using (Html.BeginForm("Create", "Article", FormMethod.Post))
+{
+    <div>
+        @Html.LabelFor(model => model.Title, new {@class="form-label"})
+        @*@Html.Label("Title","Title:")*@
+        @Html.TextBoxFor(model => model.Title, new {@class="form-text"})
+        @*<input type="text" name="title"/>*@
+    </div>
+    <div>
+        @Html.LabelFor(model => model.ShortDescription)
+        @Html.TextAreaFor(model => model.ShortDescription)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.FullText,new {@class="form-label"})
+        @Html.TextAreaFor(model => model.FullText, new {@class="form-text"})
+    </div>
+    <div>
+        @Html.LabelFor(model => model.SourceId, "Source:", new {@class="form-label"})
+        @Html.DropDownListFor(model => model.SourceId, Model.AvailableSources)
+    </div>
+    <div>
+        <input type="submit" value="Confirm" />
+    </div>
+}
