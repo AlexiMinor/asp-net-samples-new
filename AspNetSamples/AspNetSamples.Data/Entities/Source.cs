@@ -1,6 +1,8 @@
-﻿namespace AspNetSamples.Data.Entities;
+﻿using AspNetSamples.Core;
 
-public class Source
+namespace AspNetSamples.Data.Entities;
+
+public class Source : IBaseEntity
 {
     public int Id { get; set; }
     public string Name { get; set; }

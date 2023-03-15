@@ -1,27 +1,34 @@
-﻿using AspNetSamples.Abstractions.Services;
-using AspNetSamples.Data;
-using AspNetSamples.Data.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using AspNetSamples.Abstractions;
+using AspNetSamples.Abstractions.Repositories;
+using AspNetSamples.Abstractions.Services;
+using AspNetSamples.Core.DTOs;
 
 namespace AspNetSamples.Business
 {
-    public class SourceService : ISourceService 
+    public class SourceService : ISourceService
     {
-        private readonly NewsAggregatorContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public SourceService(NewsAggregatorContext dbContext)
+        public SourceService(IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<Source>> GetSourcesAsync()
+        public async Task<List<SourceDto>> GetSourcesAsync()
         {
-            return await _dbContext.Sources.ToListAsync();
+            return await _unitOfWork.Sources.GetSourcesAsync();
         }
 
-        public async Task<List<int>> GetSourceIdsAsync()
+        public async Task<SourceDto?> GetSourceIdsAsync(int id)
         {
-            return await _dbContext.Sources.AsNoTracking().Select(source => source.Id).ToListAsync();
+            return await _unitOfWork.Sources.GetSourceByIdAsync(id);
+        }
+
+        public async Task<int> AddSourceAsync(SourceDto dto)
+        {
+            await _unitOfWork.Sources.AddSourceAsync(dto);
+             return await _unitOfWork.SaveChangesAsync();
+
         }
     }
 }

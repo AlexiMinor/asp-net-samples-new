@@ -27,6 +27,7 @@
     <ProjectReference Include="..\AspNetSamples.Abstractions\AspNetSamples.Abstractions.csproj" />
     <ProjectReference Include="..\AspNetSamples.Business\AspNetSamples.Business.csproj" />
     <ProjectReference Include="..\AspNetSamples.Data\AspNetSamples.Data.csproj" />
+    <ProjectReference Include="..\AspNetSamples.Reposiories\AspNetSamples.Repositories.csproj" />
   </ItemGroup>
 
   <ItemGroup>

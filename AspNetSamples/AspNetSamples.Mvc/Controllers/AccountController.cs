@@ -6,28 +6,33 @@ namespace AspNetSamples.Mvc.Controllers
 {
     public class AccountController : Controller
     {
+        private static List<string> _emails = new List<string>
+        {
+            "123@em.ail",
+            "123@ema.il"
+        };
+
         [HttpGet]
-        public Task<IActionResult> Register()
+        public async Task<IActionResult> Register()
         {
             return View();
         }
 
         [HttpPost]
-        public Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
-            
+            return Ok(model);
         }
 
         [HttpGet]
-        public IActionResult CheckIsUserEmailIsValidAndNotExists()
+        public IActionResult CheckIsUserEmailIsValidAndNotExists(string email)
         {
-            //go to db
-            //check that user is exists
-            //if no
+            if (_emails.Contains(email))
+            {
+                return Ok(false);
+            }
             return Ok(true);
-            //else
-            return Ok(false);
-
         }
     }
 }
+ 

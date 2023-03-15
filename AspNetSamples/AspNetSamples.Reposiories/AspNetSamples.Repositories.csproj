@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AspNetSamples.Abstractions\AspNetSamples.Abstractions.csproj" />
-    <ProjectReference Include="..\AspNetSamples.Core\AspNetSamples.Core.csproj" />
+    <ProjectReference Include="..\AspNetSamples.Data\AspNetSamples.Data.csproj" />
   </ItemGroup>
 
 </Project>

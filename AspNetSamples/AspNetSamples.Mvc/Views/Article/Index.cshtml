@@ -8,7 +8,9 @@
     // Views/Shared/_Layout.cshtml - looking after
 }
 
-<a href="~/article/create">Create</a>
+<a class="btn bg-primary" asp-action="Create" asp-controller="Article">Create</a>
+
+<a class="btn btn-info" asp-action="CreateArticleWithSource" asp-controller="Article">Create</a>
 
 <div>
     @foreach (var el in Model.ArticlePreviews)

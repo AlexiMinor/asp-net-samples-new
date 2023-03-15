@@ -22,3 +22,7 @@ AspNetSamples/AspNetSamples.Abstractions/obj/
 AspNetSamples/AspNetSamples.Business/bin/
 
 AspNetSamples/AspNetSamples.Business/obj/
+/AspNetSamples/AspNetSamples.Core/obj
+/AspNetSamples/AspNetSamples.Reposiories/bin/Debug/net6.0
+/AspNetSamples/AspNetSamples.Reposiories/obj
+/AspNetSamples/AspNetSamples.Core/bin/Debug/net6.0

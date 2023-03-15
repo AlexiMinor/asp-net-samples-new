@@ -1,10 +1,11 @@
-﻿using AspNetSamples.Data.Entities;
+﻿using AspNetSamples.Core.DTOs;
 
 namespace AspNetSamples.Abstractions.Services
 {
     public interface ISourceService
     {
-        Task<List<Source>> GetSourcesAsync();
-        Task<List<int>> GetSourceIdsAsync();
+        Task<List<SourceDto>> GetSourcesAsync();
+        Task<SourceDto?> GetSourceIdsAsync(int id);
+        Task<int> AddSourceAsync(SourceDto dto);
     }
 }

@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AspNetSamples.Core\AspNetSamples.Core.csproj" />
-    <ProjectReference Include="..\AspNetSamples.Data\AspNetSamples.Data.csproj" />
-  </ItemGroup>
-
 </Project>

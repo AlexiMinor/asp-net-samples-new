@@ -1,6 +1,9 @@
+using AspNetSamples.Abstractions;
+using AspNetSamples.Abstractions.Data.Repositories;
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Business;
 using AspNetSamples.Data;
+using AspNetSamples.Repositories;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -27,12 +30,18 @@ namespace AspNetSamples.Mvc
                 opt.UseSqlServer(connString);
             });
 
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+            builder.Services.AddScoped<ISourceRepository, SourceRepository>();
+
             builder.Services.AddTransient<IArticleService, ArticleService>();
             builder.Services.AddTransient<ISourceService, SourceService>();
+            builder.Services.AddTransient<ICommentService, CommentService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            
-            
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -57,7 +66,7 @@ namespace AspNetSamples.Mvc
             app.MapControllerRoute(
                 name: "name",
                 pattern: "api/{controller}/{action}/{name}/{age?}",
-                constraints: new {age = new IntRouteConstraint()}
+                constraints: new { age = new IntRouteConstraint() }
                 );
 
             app.Run();

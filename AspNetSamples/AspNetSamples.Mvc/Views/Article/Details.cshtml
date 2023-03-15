@@ -1,5 +1,37 @@
-﻿@model AspNetSamples.Data.Entities.Article
+﻿@model ArticleDetailsWithCreateCommentModel
 
 <div>
-    <h2>@Model.Title</h2>
+    <h2>@Model.ArticleDetails.Title</h2>
 </div>
+<div>
+    <h5>@Model.ArticleDetails.SourceName</h5>
+</div>
+
+<div>
+    @Model.ArticleDetails.FullText
+</div>
+
+@foreach (var comment in Model.Comments)
+{
+    <div>
+        <h4>@comment.User</h4>
+        <p>@comment.CommentText</p>
+    </div>
+}
+
+<form asp-action="Create" asp-controller="Comment" method="post" asp-antiforgery="true">
+    <input type="hidden" asp-for="CreateComment.ArticleId"/>
+    <div class="mb-3">
+        <label class="form-label" asp-for="CreateComment.User">User</label>
+        <input class="form-control" type="text" asp-for="CreateComment.User"/>
+        <span asp-validation-for="CreateComment.User"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="CreateComment.CommentText">Comment Text</label>
+        <textarea class="form-control" rows="5" asp-for="CreateComment.CommentText"></textarea>
+        <span asp-validation-for="CreateComment.CommentText"></span>
+    </div>
+    <div>
+        <input class="btn btn-primary" type="submit" value="Confirm"/>
+    </div>
+</form>

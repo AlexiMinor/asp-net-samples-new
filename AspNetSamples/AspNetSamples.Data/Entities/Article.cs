@@ -1,6 +1,8 @@
-﻿namespace AspNetSamples.Data.Entities;
+﻿using AspNetSamples.Core;
 
-public class Article
+namespace AspNetSamples.Data.Entities;
+
+public class Article : IBaseEntity
 {
     public int Id { get; set; }
     public string Title { get; set; }
@@ -10,5 +12,7 @@ public class Article
 
     public int SourceId { get; set; }
     public Source Source { get; set; }
+
+    public virtual List<Comment> Comments { get; set; }
 
 }

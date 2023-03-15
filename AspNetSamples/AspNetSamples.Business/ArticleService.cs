@@ -1,55 +1,86 @@
-﻿using AspNetSamples.Abstractions.Services;
-using AspNetSamples.Data;
-using AspNetSamples.Data.Entities;
+﻿using AspNetSamples.Abstractions;
+using AspNetSamples.Abstractions.Repositories;
+using AspNetSamples.Abstractions.Services;
+using AspNetSamples.Core.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetSamples.Business
 {
-    public class ArticleService : IArticleService 
+    public class ArticleService : IArticleService
     {
-        private readonly NewsAggregatorContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ArticleService(NewsAggregatorContext dbContext)
+        public ArticleService(IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
         }
 
-
-        public async Task<List<Article>> GetArticlesWithSourceAsync()
-        {
-            var articles = await _dbContext.Articles
-                .Include(article => article.Source)
-                .AsNoTracking()
-                .ToListAsync();
-            return articles;
-        }
+        //public async Task<List<ArticleDto>> GetArticlesWithSourceAsync()
+        //{
+        //    var articles = await _articleRepository.GetArticlesAsync();
+        //    return articles;
+        //}
 
         public async Task<int> GetTotalArticlesCountAsync()
         {
-            var count = await _dbContext.Articles.CountAsync();
+            var count = await _unitOfWork.Articles.CountAsync();
             return count;
         }
 
-        public IQueryable<Article> GetArticlesWithSourceNoTrackingAsQueryable()
+        //public IQueryable<Article> GetArticlesWithSourceNoTrackingAsQueryable()
+        //{
+        //    var articles = _dbContext.Articles
+        //        .Include(article => article.Source)
+        //        .AsNoTracking();
+              
+        //    return articles;
+        //}
+
+        public async Task<List<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize)
         {
-            var articles = _dbContext.Articles
-                .Include(article => article.Source)
-                .AsNoTracking();
-            return articles;
+            var articlesByPage = await _unitOfWork.Articles.GetArticlesForPageAsync(page, pageSize);
+            return articlesByPage;
         }
 
-        public async Task<Article> GetArticleByIdAsync(int id)
+        public Task<int> AddArticleWithNewSourceAsync()
         {
-            var article = await _dbContext.Articles
-                .FirstOrDefaultAsync(article1 => article1.Id == id);
+            _unitOfWork.NewArticleRepository
+                .FindBy(article => !string.IsNullOrEmpty(article.FullText),
+                    article => article.Source,
+                    article => article.Comments)
+                .Select(article => new ArticleDto(){})
+                .ToListAsync();
 
-            return article;
         }
 
-        public async Task<int> AddAsync(Article article)
+        //public async Task<Task<ArticleDto?>> GetArticleByIdAsync(int id)
+        //{
+        //    var article = _articleRepository.GetArticleByIdAsync(id);
+
+        //    return article;
+        //}
+
+        public async Task<ArticleDto?> GetArticleByIdWithSourceNameAsync(int id)
         {
-            await _dbContext.Articles.AddAsync(article);
-            return await _dbContext.SaveChangesAsync();
+            var article = await _unitOfWork.Articles.GetArticleByIdAsync(id);
+            return article ?? null;
         }
+
+        public async Task AddAsync(ArticleDto article)
+        {
+            await _unitOfWork.Articles.AddArticleAsync(article);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task AddArticleWithSourceAsync(ArticleDto articleDto, SourceDto sourceDto)
+        {
+            var sourceId = await _unitOfWork.Sources.AddSourceAsync(sourceDto);
+
+            articleDto.SourceId = sourceId;
+            await _unitOfWork.Articles.AddArticleAsync(articleDto);
+            
+            await _unitOfWork.SaveChangesAsync();
+        }
+
     }
 }

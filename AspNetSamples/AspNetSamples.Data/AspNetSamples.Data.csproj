@@ -23,4 +23,8 @@
     <Folder Include="Entities\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AspNetSamples.Core\AspNetSamples.Core.csproj" />
+  </ItemGroup>
+
 </Project>

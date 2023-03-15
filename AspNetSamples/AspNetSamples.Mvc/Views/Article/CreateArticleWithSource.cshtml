@@ -1,8 +1,8 @@
-﻿@model CreateArticleModel
+﻿@model CreateArticleWithSourceModel
 
 <h3>Create article</h3>
 
-<form asp-action="Create" asp-controller="Article" asp-antiforgery="true" method="post">
+<form asp-action="CreateArticleWithSource" asp-controller="Article" asp-antiforgery="true" method="post">
     <div class="mb-3">
         <label class="form-label" asp-for="Title">Title</label>
         <input class="form-control" type="text" asp-for="Title" />
@@ -19,11 +19,10 @@
         <span asp-validation-for="FullText"></span>
     </div>
     <div class="mb-3">
-        <label class="form-label" asp-for="SourceId">Source</label>
-        <select class="form-select" asp-for="SourceId" asp-items="@Model.AvailableSources"></select>
-        <span asp-validation-for="SourceId"></span>
+        <label class="form-label" asp-for="SourceName">Source</label>
+        <input class="form-control" asp-for="SourceName"/>
+        <span asp-validation-for="SourceName"></span>
     </div>
-    <input type="hidden" asp-for="AvailableSources"/>
     <div>
         <input type="submit" value="Confirm" />
     </div>
