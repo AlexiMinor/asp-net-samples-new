@@ -3,10 +3,10 @@ using AspNetSamples.Abstractions.Data.Repositories;
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Business;
 using AspNetSamples.Data;
+using AspNetSamples.Data.Entities;
 using AspNetSamples.Repositories;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace AspNetSamples.Mvc
 {
@@ -31,14 +31,17 @@ namespace AspNetSamples.Mvc
             });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
-            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-            builder.Services.AddScoped<ISourceRepository, SourceRepository>();
+            builder.Services.AddScoped<IRepository<Comment>, Repository<Comment>>();
+            builder.Services.AddScoped<IRepository<Source>, Repository<Source>>();
 
             builder.Services.AddTransient<IArticleService, ArticleService>();
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
-            // Add services to the container.
+            
+            builder.Services.AddAutoMapper(typeof(Program));
+
             builder.Services.AddControllersWithViews();
 
 

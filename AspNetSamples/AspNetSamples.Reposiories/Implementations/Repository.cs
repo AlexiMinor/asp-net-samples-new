@@ -1,10 +1,10 @@
 ﻿using System.Linq.Expressions;
-using AspNetSamples.Abstractions.Data;
 using AspNetSamples.Abstractions.Data.Repositories;
 using AspNetSamples.Core;
 using AspNetSamples.Core.DTOs;
 using AspNetSamples.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace AspNetSamples.Repositories;
 
@@ -21,18 +21,18 @@ public class Repository<TEntity> : IRepository<TEntity>
     }
 
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         Db.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    public async Task<TEntity?> GetByIdAsync(int id)
+    public virtual async Task<TEntity?> GetByIdAsync(int id)
     {
         return await DbSet.AsNoTracking().FirstOrDefaultAsync(entity => entity.Id == id);
     }
 
-    public IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate, 
+    public virtual IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate, 
         params Expression<Func<TEntity, object>>[] includes)
     {
         var result = DbSet.Where(predicate);
@@ -51,22 +51,22 @@ public class Repository<TEntity> : IRepository<TEntity>
         return result;
     }
 
-    public IQueryable<TEntity> GetAsQueryable()
+    public virtual IQueryable<TEntity> GetAsQueryable()
     {
         return DbSet;
     }
 
-    public async Task AddAsync(TEntity entity)
+    public virtual async Task<EntityEntry<TEntity>> AddAsync(TEntity entity)
     {
-        await DbSet.AddAsync(entity);
+        return await DbSet.AddAsync(entity);
     }
 
-    public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities)
     {
         await DbSet.AddRangeAsync(entities);
     }
 
-    public async Task PatchAsync(int id, List<PatchDto> patchDtos)
+    public virtual async Task PatchAsync(int id, List<PatchDto> patchDtos)
     {
         var entity =
             await DbSet.FirstOrDefaultAsync(ent => ent.Id == id);
@@ -80,20 +80,25 @@ public class Repository<TEntity> : IRepository<TEntity>
         dbEntityEntry.State = EntityState.Modified;
     }
 
-    public async Task Update(TEntity entity)
+    public virtual async Task Update(TEntity entity)
     {
         DbSet.Update(entity);
     }
 
-    public async Task Remove(int id)
+    public virtual async Task Remove(int id)
     {
         var entity =
             await DbSet.FirstOrDefaultAsync(ent => ent.Id==id);
         DbSet.Remove(entity);
     }
 
-    public async Task RemoveRange(IEnumerable<TEntity> entities)
+    public virtual async Task RemoveRange(IEnumerable<TEntity> entities)
     {
         DbSet.RemoveRange(entities);
+    }
+
+    public virtual async Task<int> CountAsync()
+    {
+        return await DbSet.CountAsync();
     }
 }

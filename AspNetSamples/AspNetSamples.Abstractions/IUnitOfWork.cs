@@ -6,8 +6,8 @@ namespace AspNetSamples.Abstractions;
 public interface IUnitOfWork : IDisposable
 {
     public IArticleRepository Articles { get; }
-    public ICommentRepository Comments { get; }
-    public ISourceRepository Sources { get; }
-    public IRepository<Article> NewArticleRepository { get; }
-    Task<int> SaveChangesAsync();
+    public IRepository<Comment> Comments { get; }
+    public IRepository<Source> Sources { get; }
+    public Task<int> SaveChangesAsync();
+
 }

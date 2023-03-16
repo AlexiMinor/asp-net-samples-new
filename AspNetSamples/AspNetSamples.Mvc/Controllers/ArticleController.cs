@@ -1,6 +1,7 @@
 ﻿using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Core.DTOs;
 using AspNetSamples.Mvc.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -12,15 +13,19 @@ namespace AspNetSamples.Mvc.Controllers
         private readonly ISourceService _sourceService;
         private readonly ICommentService _commentService;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
         public ArticleController(IArticleService articleService,
             ISourceService sourceService,
-            IConfiguration configuration, ICommentService commentService)
+            IConfiguration configuration, 
+            ICommentService commentService, 
+            IMapper mapper)
         {
             _articleService = articleService;
             _sourceService = sourceService;
             _configuration = configuration;
             _commentService = commentService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -41,14 +46,9 @@ namespace AspNetSamples.Mvc.Controllers
                     .GetArticlesByPageAsync(page, pageSize);
 
                var articles = articleDtos
-                    .Select(article => new ArticlePreviewModel
-                    {
-                        Id = article.Id,
-                        ShortDescription = article.ShortDescription,
-                        Title = article.Title,
-                        SourceName = article.SourceName
-                    })
-                .ToList();
+                   .Select(dto => 
+                       _mapper.Map<ArticlePreviewModel>(dto))
+                   .ToList();
 
 
                 //if (Request.Query.ContainsKey("ad"))
@@ -149,7 +149,7 @@ namespace AspNetSamples.Mvc.Controllers
             {
                 Title = model.Title,
                 FullText = model.FullText,
-                ShortDescription = model.ShortDescription,
+                Description = model.ShortDescription,
             };
             await _articleService.AddAsync(articleDto);
 
@@ -162,7 +162,7 @@ namespace AspNetSamples.Mvc.Controllers
             {
                 Title = model.Title,
                 SourceId = model.SourceId,
-                ShortDescription = model.ShortDescription,
+                Description = model.ShortDescription,
                 FullText = model.FullText
             };
             return dto;

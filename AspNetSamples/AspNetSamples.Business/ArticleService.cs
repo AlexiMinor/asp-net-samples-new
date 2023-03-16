@@ -1,7 +1,8 @@
 ﻿using AspNetSamples.Abstractions;
-using AspNetSamples.Abstractions.Repositories;
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Core.DTOs;
+using AspNetSamples.Data.Entities;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetSamples.Business
@@ -9,10 +10,13 @@ namespace AspNetSamples.Business
     public class ArticleService : IArticleService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ArticleService(IUnitOfWork unitOfWork)
+        public ArticleService(IUnitOfWork unitOfWork, 
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         //public async Task<List<ArticleDto>> GetArticlesWithSourceAsync()
@@ -32,26 +36,31 @@ namespace AspNetSamples.Business
         //    var articles = _dbContext.Articles
         //        .Include(article => article.Source)
         //        .AsNoTracking();
-              
+
         //    return articles;
         //}
 
         public async Task<List<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize)
         {
-            var articlesByPage = await _unitOfWork.Articles.GetArticlesForPageAsync(page, pageSize);
-            return articlesByPage;
+            var articles = (await _unitOfWork
+                    .Articles
+                    .GetArticlesByPageAsync(page, pageSize))
+                .Select(article => _mapper.Map<ArticleDto>(article))
+                .ToList();
+
+            return articles;
         }
 
-        public Task<int> AddArticleWithNewSourceAsync()
-        {
-            _unitOfWork.NewArticleRepository
-                .FindBy(article => !string.IsNullOrEmpty(article.FullText),
-                    article => article.Source,
-                    article => article.Comments)
-                .Select(article => new ArticleDto(){})
-                .ToListAsync();
-
-        }
+        //public async Task<int> AddArticleWithNewSourceAsync()
+        //{
+        //    _unitOfWork.Articles
+        //        .FindBy(article => !string.IsNullOrEmpty(article.FullText),
+        //            article => article.Source,
+        //            article => article.Comments)
+        //        .Select(article => new ArticleDto(){})
+        //        .ToListAsync();
+        //    return await _unitOfWork.SaveChangesAsync();
+        //}
 
         //public async Task<Task<ArticleDto?>> GetArticleByIdAsync(int id)
         //{
@@ -62,25 +71,42 @@ namespace AspNetSamples.Business
 
         public async Task<ArticleDto?> GetArticleByIdWithSourceNameAsync(int id)
         {
-            var article = await _unitOfWork.Articles.GetArticleByIdAsync(id);
-            return article ?? null;
+            var article = await _unitOfWork.Articles.GetByIdAsync(id);
+
+            return
+                article != null
+                    ? _mapper.Map<ArticleDto>(article)
+                    : null;
         }
 
-        public async Task AddAsync(ArticleDto article)
+        public async Task AddAsync(ArticleDto dto)
         {
-            await _unitOfWork.Articles.AddArticleAsync(article);
+            await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(dto));
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddArticleWithSourceAsync(ArticleDto articleDto, SourceDto sourceDto)
-        {
-            var sourceId = await _unitOfWork.Sources.AddSourceAsync(sourceDto);
+        //public async Task<int> AddArticlesAsync()
+        //{
+        //    var articlesForAdd = new List<Article>();
 
-            articleDto.SourceId = sourceId;
-            await _unitOfWork.Articles.AddArticleAsync(articleDto);
-            
+        //    //_unitOfWork.Articles.AddArticlesOptimizedWay()
+        //}
+
+        public async Task AddArticleWithSourceAsync(
+                ArticleDto articleDto,
+                SourceDto sourceDto)
+        {
+            var entry = await _unitOfWork.Sources.AddAsync(
+                _mapper.Map<Source>(sourceDto));
+
+            articleDto.SourceId = entry.Entity.Id;
+            await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(articleDto));
+
             await _unitOfWork.SaveChangesAsync();
         }
+
+
+
 
     }
 }

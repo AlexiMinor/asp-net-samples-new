@@ -8,28 +8,24 @@ namespace AspNetSamples.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly NewsAggregatorContext _dbContext;
-    private readonly IArticleRepository _articleRepository;
-    private readonly IRepository<Article> _newArticleRepository;
-    private readonly ICommentRepository _commentRepository;
-    private readonly ISourceRepository _sourceRepository;
+    private readonly IArticleRepository _newArticleRepository;
+    private readonly IRepository<Comment> _commentRepository;
+    private readonly IRepository<Source> _sourceRepository;
     
     public UnitOfWork(NewsAggregatorContext dbContext, 
-        IArticleRepository articleRepository, 
-        ICommentRepository commentRepository, 
-        ISourceRepository sourceRepository, 
-        IRepository<Article> newArticleRepository)
+    IArticleRepository newArticleRepository, 
+    IRepository<Comment> commentRepository, 
+    IRepository<Source> sourceRepository)
     {
         _dbContext = dbContext;
-        _articleRepository = articleRepository;
+        _newArticleRepository = newArticleRepository;
         _commentRepository = commentRepository;
         _sourceRepository = sourceRepository;
-        _newArticleRepository = newArticleRepository;
     }
 
-    public IArticleRepository Articles => _articleRepository;
-    public ICommentRepository Comments => _commentRepository;
-    public ISourceRepository Sources => _sourceRepository;
-    public IRepository<Article> NewArticleRepository => _newArticleRepository;
+    public IArticleRepository Articles => _newArticleRepository;
+    public IRepository<Comment> Comments => _commentRepository;
+    public IRepository<Source> Sources => _sourceRepository;
 
     public async Task<int> SaveChangesAsync()
     {

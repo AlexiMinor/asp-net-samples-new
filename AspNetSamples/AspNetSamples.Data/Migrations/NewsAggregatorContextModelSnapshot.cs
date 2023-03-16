@@ -36,7 +36,7 @@ namespace AspNetSamples.Data.Migrations
                     b.Property<double>("Rate")
                         .HasColumnType("float");
 
-                    b.Property<string>("ShortDescription")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

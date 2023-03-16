@@ -3,9 +3,9 @@ using AspNetSamples.Data.Entities;
 
 namespace AspNetSamples.Repositories;
 
-public class ArticleGenericRepository : Repository<Article>
+public class SourceGenericRepository : Repository<Source>
 {
-    public ArticleGenericRepository(NewsAggregatorContext newsAggregatorContext) 
+    public SourceGenericRepository(NewsAggregatorContext newsAggregatorContext) 
         : base(newsAggregatorContext)
     {
     }
