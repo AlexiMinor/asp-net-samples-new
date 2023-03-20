@@ -1,10 +1,14 @@
 ﻿using AspNetSamples.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using AspNetSamples.Mvc.Filters;
 
 namespace AspNetSamples.Mvc.Controllers
 {
     //[Route("Main")]
+    //[MyCustomResourceFilter]
+    //[TypeFilter(typeof(MyCustomResourceFilter))]
+    [ServiceFilter(typeof(MyCustomResourceFilter))]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -15,11 +19,13 @@ namespace AspNetSamples.Mvc.Controllers
         }
 
         //[Route("index")]
-        public IActionResult Index()
+        [MyCustomActionFilter]
+        public IActionResult Index(string artCount)
         {
             return View();
         }
 
+        [MyCustomActionFilter]
         [Route("Privacy/general")]
         public IActionResult Privacy()
         {
