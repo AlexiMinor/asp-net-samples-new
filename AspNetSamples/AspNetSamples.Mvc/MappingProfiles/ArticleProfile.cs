@@ -10,10 +10,10 @@ public class ArticleProfile : Profile
     public ArticleProfile()
     {
         CreateMap<Article, ArticleDto>()
-            .ForMember(dto => dto.Description, 
-                opt 
+            .ForMember(dto => dto.ShortDescription,
+                opt
                     => opt.MapFrom(
-                        article 
+                        article
                         => article.ShortDescription)); //source -> destination
 
         CreateMap<ArticleDto, Article>()
@@ -21,13 +21,13 @@ public class ArticleProfile : Profile
                 opt
                     => opt.MapFrom(
                         dto
-                            => dto.Description));
+                            => dto.ShortDescription));
 
         CreateMap<ArticleDto, ArticlePreviewModel>()
             .ForMember(dto => dto.ShortDescription,
             opt
                 => opt.MapFrom(
                     dto
-                        => dto.Description)); ;
+                        => dto.ShortDescription)); ;
     }
 }

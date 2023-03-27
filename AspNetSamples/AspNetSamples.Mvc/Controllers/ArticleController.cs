@@ -2,11 +2,14 @@
 using AspNetSamples.Core.DTOs;
 using AspNetSamples.Mvc.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AspNetSamples.Mvc.Controllers
 {
+    //[Authorize(Policy = "18+Content")]
+    [Authorize]
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
@@ -149,7 +152,7 @@ namespace AspNetSamples.Mvc.Controllers
             {
                 Title = model.Title,
                 FullText = model.FullText,
-                Description = model.ShortDescription,
+                ShortDescription = model.ShortDescription,
             };
             await _articleService.AddAsync(articleDto);
 
@@ -162,7 +165,7 @@ namespace AspNetSamples.Mvc.Controllers
             {
                 Title = model.Title,
                 SourceId = model.SourceId,
-                Description = model.ShortDescription,
+                ShortDescription = model.ShortDescription,
                 FullText = model.FullText
             };
             return dto;

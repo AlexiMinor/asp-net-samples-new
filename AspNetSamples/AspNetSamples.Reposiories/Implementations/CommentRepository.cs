@@ -112,7 +112,6 @@ namespace AspNetSamples.Repositories
                 Id = comment.Id,
                 ArticleId = comment.ArticleId,
                 CommentText = comment.CommentText,
-                User = comment.AuthorName
             };
 
             return dto;
@@ -125,7 +124,6 @@ namespace AspNetSamples.Repositories
                 Id = dto.Id,
                 ArticleId = dto.ArticleId,
                 CommentText = dto.CommentText,
-                AuthorName= dto.User
             };
 
             return comment;
