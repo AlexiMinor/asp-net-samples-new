@@ -5,6 +5,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace AspNetSamples.Mvc.Controllers
 {
@@ -20,8 +22,8 @@ namespace AspNetSamples.Mvc.Controllers
 
         public ArticleController(IArticleService articleService,
             ISourceService sourceService,
-            IConfiguration configuration, 
-            ICommentService commentService, 
+            IConfiguration configuration,
+            ICommentService commentService,
             IMapper mapper)
         {
             _articleService = articleService;
@@ -34,49 +36,54 @@ namespace AspNetSamples.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int page = 1)
         {
-            var totalArticlesCount = await _articleService.GetTotalArticlesCountAsync();
-
-            if (int.TryParse(_configuration["Pagination:Articles:DefaultPageSize"], out var pageSize))
+            //Log.Information("Hello there");
+           try
             {
-                var pageInfo = new PageInfo()
+                var totalArticlesCount = await _articleService.GetTotalArticlesCountAsync();
+                //Log.Debug("Count of articles was gotten successfully");
+                if (int.TryParse(_configuration["Pagination:Articles:DefaultPageSize"], out var pageSize))
                 {
-                    PageSize = pageSize,
-                    PageNumber = page,
-                    TotalItems = totalArticlesCount
-                };
+                    var pageInfo = new PageInfo()
+                    {
+                        PageSize = pageSize,
+                        PageNumber = page,
+                        TotalItems = totalArticlesCount
+                    };
 
-                var articleDtos = await _articleService
-                    .GetArticlesByPageAsync(page, pageSize);
+                    var articleDtos = await _articleService
+                        .GetArticlesByPageAsync(page, pageSize);
 
-               var articles = articleDtos
-                   .Select(dto => 
-                       _mapper.Map<ArticlePreviewModel>(dto))
-                   .ToList();
+                    var articles = articleDtos
+                        .Select(dto =>
+                            _mapper.Map<ArticlePreviewModel>(dto))
+                        .ToList();
 
+                    return View(new ArticlesWithPaginationModel()
+                    {
+                        ArticlePreviews = articles,
+                        PageInfo = pageInfo
+                    });
+                }
 
-                //if (Request.Query.ContainsKey("ad"))
-                //{
-                //    var adSource = Request.Query["ad"];
-                //}
-                return View(new ArticlesWithPaginationModel()
+                else
                 {
-                    ArticlePreviews = articles,
-                    PageInfo = pageInfo
-                });
+                    Log.Warning("Trying to get page with incorrect pageNumber");
+                    return BadRequest();
+                }
             }
-
-            else
+            catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Can't read configuration data" });
+                Log.Error(ex, ex.Message);
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details([FromRoute] ArticleSearchModel searchData)
+        public async Task<IActionResult> Details(int id)
         {
-            var articleDto = await _articleService.GetArticleByIdWithSourceNameAsync(searchData.Id);
+            var articleDto = await _articleService.GetArticleByIdWithSourceNameAsync(id);
 
-            if (articleDto!= null)
+            if (articleDto != null)
             {
                 var comments = await _commentService.GetCommentsByArticleIdAsync(articleDto.Id);
 
@@ -158,6 +165,22 @@ namespace AspNetSamples.Mvc.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetArticlesNames(string name="")
+        {
+            try
+            {
+                var names = await _articleService.GetArticlesNamesByPartNameAsync(name);
+                return Ok(names);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
+
 
         private ArticleDto Convert(CreateArticleModel model)
         {

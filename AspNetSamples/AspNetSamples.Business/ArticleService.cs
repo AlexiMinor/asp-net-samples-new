@@ -42,14 +42,40 @@ namespace AspNetSamples.Business
 
         public async Task<List<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize)
         {
-            var articles = (await _unitOfWork
-                    .Articles
-                    .GetArticlesByPageAsync(page, pageSize))
-                .Select(article => _mapper.Map<ArticleDto>(article))
-                .ToList();
+            try
+            {
+                var articles = (await _unitOfWork
+                        .Articles
+                        .GetArticlesByPageAsync(page, pageSize))
+                    .Select(article => _mapper.Map<ArticleDto>(article))
+                    .ToList();
+
+                //var x = 0;
+                //var z = 15 / x;
+
+                return articles;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+          
+        }
+
+        public async Task<List<AutoCompleteDataDto>> GetArticlesNamesByPartNameAsync(string partName)
+        {
+            var articles = await _unitOfWork.Articles
+                .GetAsQueryable()
+                .AsNoTracking()
+                .Where(article => article.Title.Contains(partName))
+                .Select(article => _mapper.Map<AutoCompleteDataDto>(article))
+                .ToListAsync();
 
             return articles;
+                
         }
+
 
         //public async Task<int> AddArticleWithNewSourceAsync()
         //{

@@ -1,37 +1,49 @@
 ﻿@model ArticleDetailsWithCreateCommentModel
 
-<div>
-    <h2>@Model.ArticleDetails.Title</h2>
-</div>
-<div>
-    <h5>@Model.ArticleDetails.SourceName</h5>
+
+<div class="row">
+    <div class="col-12">
+        <h2>@Model.ArticleDetails.Title</h2>
+    </div>
+
+    <div class="col-12">
+        <h5>@Model.ArticleDetails.SourceName</h5>
+    </div>
+
+    <div class="col-12">
+        @Model.ArticleDetails.FullText
+    </div>
 </div>
 
-<div>
-    @Model.ArticleDetails.FullText
+<div class="row">
+    <button class="col-12 btn btn-primary" id="commments-toggle-btn">Comments</button>
 </div>
 
-@foreach (var comment in Model.Comments)
+<div class="collapse" id="collapsisbleComments" aria-expanded="false">
+   
+    <div class="comments">
+        
+    </div>
+
+    <form asp-action="Create" asp-controller="Comment" method="post" asp-antiforgery="true">
+        <input type="hidden" asp-for="CreateComment.ArticleId" />
+        <div class="mb-3">
+            <label class="form-label" asp-for="CreateComment.User">User</label>
+            <input class="form-control" type="text" asp-for="CreateComment.User" />
+            <span asp-validation-for="CreateComment.User"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" asp-for="CreateComment.CommentText">Comment Text</label>
+            <textarea class="form-control" rows="5" asp-for="CreateComment.CommentText"></textarea>
+            <span asp-validation-for="CreateComment.CommentText"></span>
+        </div>
+        <div>
+            <input class="btn btn-primary" type="submit" value="Confirm" />
+        </div>
+    </form>
+</div>
+
+@section Scripts
 {
-    <div>
-        <h4>@comment.User</h4>
-        <p>@comment.CommentText</p>
-    </div>
+    <script src="/js/article-details.js"></script>
 }
-
-<form asp-action="Create" asp-controller="Comment" method="post" asp-antiforgery="true">
-    <input type="hidden" asp-for="CreateComment.ArticleId"/>
-    <div class="mb-3">
-        <label class="form-label" asp-for="CreateComment.User">User</label>
-        <input class="form-control" type="text" asp-for="CreateComment.User"/>
-        <span asp-validation-for="CreateComment.User"></span>
-    </div>
-    <div class="mb-3">
-        <label class="form-label" asp-for="CreateComment.CommentText">Comment Text</label>
-        <textarea class="form-control" rows="5" asp-for="CreateComment.CommentText"></textarea>
-        <span asp-validation-for="CreateComment.CommentText"></span>
-    </div>
-    <div>
-        <input class="btn btn-primary" type="submit" value="Confirm"/>
-    </div>
-</form>

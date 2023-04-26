@@ -1,8 +1,26 @@
-﻿@{
+﻿@model HomePageModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row"> 
+@foreach (var article in @Model.FavouredArticles)
+{
+    await Html.RenderPartialAsync("ArticlePreivewPartial", article);
+}
 </div>
+@{
+    await Html.RenderPartialAsync("WeatherPreviewPartial");
+}
+
+<div class="row">
+    <button id="theme-switcher-btn" class="btn btn-primary col-sm-10 col-md-4 col-lg-3 col-xl-2">
+        Switch theme
+    </button>
+</div>
+
+@section Scripts
+{
+    <script src="js/home-page.js"></script>
+}

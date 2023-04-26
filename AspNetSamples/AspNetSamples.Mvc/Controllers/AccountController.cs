@@ -77,10 +77,36 @@ namespace AspNetSamples.Mvc.Controllers
             return Ok(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LoginWithJS([FromBody]LoginModel model)
+        {
+            if (await _userService.IsUserExistsAsync(model.Email)
+                && await _userService.IsPasswordCorrectAsync(model.Email, model.Password))
+            {
+                var user = await _userService.GetUserByEmailAsync(model.Email);
+                await AuthenticateAsync(user);
+
+                return Ok();
+            }
+
+            return BadRequest(model);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> CheckIsUserEmailIsValidAndNotExists(string email)
         {
            return Ok(!await _userService.IsUserExistsAsync(email));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IsUserAuthenticated()
+        {
+            if (HttpContext.User?.Identity != null)
+            {
+                return Ok(true);
+            }
+            return Ok(false);
         }
 
         [HttpGet]

@@ -11,5 +11,6 @@ namespace AspNetSamples.Abstractions.Services
         //IQueryable<Article> GetArticlesWithSourceNoTrackingAsQueryable();
         Task<List<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize);
         //Task<int> AddArticleWithNewSourceAsync();
+        Task<List<AutoCompleteDataDto>> GetArticlesNamesByPartNameAsync(string partName);
     }
 }

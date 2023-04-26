@@ -6,12 +6,13 @@ using AspNetSamples.Data;
 using AspNetSamples.Data.Entities;
 using AspNetSamples.Mvc.Auth;
 using AspNetSamples.Mvc.Filters;
-using AspNetSamples.Mvc.Middlewares;
+using AspNetSamples.Mvc.sinks;
 using AspNetSamples.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 
 namespace AspNetSamples.Mvc
 {
@@ -21,12 +22,33 @@ namespace AspNetSamples.Mvc
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .MinimumLevel.Debug()
+                //.WriteTo.MyCustomSink()
+                .WriteTo.File("C:\\Users\\AlexiMinor\\Desktop\\434\\log.txt", LogEventLevel.Information)
+                .CreateLogger();
+
+
+
+            //builder.Host.UseSerilog((ctx, lc)
+            //    =>
+            //{
+            //    lc.ReadFrom.Configuration(ctx.Configuration)
+            //        .Enrich.FromLogContext()
+            //        .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
+            //        .Enrich.WithProperty("Environment", ctx.HostingEnvironment);
+            //});
+
+            builder.Host.UseSerilog();
+
             //builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>()
             //{
             //    {"User1","Bob"},
             //    {"User2","Alice"},
             //});
-
+            
             builder.Services.AddDbContext<NewsAggregatorContext>(
                 opt =>
             {
@@ -78,6 +100,8 @@ namespace AspNetSamples.Mvc
 
             var app = builder.Build();
 
+
+
             //app.UseTestMiddleware();
             //app.http
             //app.UseCors();
@@ -89,6 +113,8 @@ namespace AspNetSamples.Mvc
                 app.UseHsts();
             }
 
+            app.UseSerilogRequestLogging();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -97,7 +123,7 @@ namespace AspNetSamples.Mvc
 
             app.UseAuthentication();
             app.UseAuthorization();
-          
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id:int?}/");

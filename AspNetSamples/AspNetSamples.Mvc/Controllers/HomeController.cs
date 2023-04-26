@@ -1,7 +1,9 @@
 ﻿using AspNetSamples.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Mvc.Filters;
+using AutoMapper;
 
 namespace AspNetSamples.Mvc.Controllers
 {
@@ -12,17 +14,33 @@ namespace AspNetSamples.Mvc.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IArticleService _articleService;
+        private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, 
+            IArticleService articleService, 
+            IMapper mapper)
         {
             _logger = logger;
+            _articleService = articleService;
+            _mapper = mapper;
         }
 
         //[Route("index")]
         [MyCustomActionFilter]
-        public IActionResult Index(string artCount)
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var favArticles = (await _articleService
+                .GetArticlesByPageAsync(1, 3)).Select(dto => _mapper.Map<ArticlePreviewModel>(dto))
+                .ToList();
+
+            var model = new HomePageModel()
+            {
+                FavouredArticles = favArticles
+            };
+
+
+            return View(model);
         }
 
         [MyCustomActionFilter]
@@ -53,6 +71,13 @@ namespace AspNetSamples.Mvc.Controllers
             {
                 Console.WriteLine(i);
             }
+        }
+
+        public async Task<IActionResult> WeatherPreviewPartial()
+        {
+            var x = 0;
+            x++;
+            return View();
         }
     }
 }

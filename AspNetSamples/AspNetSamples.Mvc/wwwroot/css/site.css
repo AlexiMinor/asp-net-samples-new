@@ -24,3 +24,7 @@ body {
 .input-validation-error {
     border: 1px solid red;
 }
+
+.card-with-margin {
+    margin: 10px;
+}
