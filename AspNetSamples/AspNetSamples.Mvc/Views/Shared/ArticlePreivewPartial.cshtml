@@ -4,7 +4,7 @@
     @*<img src="..." class="card-img-top" alt="...">*@
     <div class="card-body">
         <h5 class="card-title"> @Model.Title</h5>
-        <p class="card-text">@Model.ShortDescription</p>
+        <p class="card-text">@Html.Raw(Model.ShortDescription)</p>
         <a asp-action="Details" asp-controller="Article" asp-route-id="@Model.Id" class="btn btn-primary">Go somewhere</a>
     </div>
     <div class="card-footer">

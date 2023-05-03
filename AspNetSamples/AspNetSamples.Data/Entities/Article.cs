@@ -10,6 +10,8 @@ public class Article : IBaseEntity
     public string FullText { get; set; }
     public double Rate { get; set;}
 
+    public string ArticleSourceUrl { get; set; }
+
     public int SourceId { get; set; }
     public Source Source { get; set; }
 

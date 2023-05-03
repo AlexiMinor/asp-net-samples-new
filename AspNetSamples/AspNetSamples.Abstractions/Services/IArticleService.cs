@@ -12,5 +12,12 @@ namespace AspNetSamples.Abstractions.Services
         Task<List<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize);
         //Task<int> AddArticleWithNewSourceAsync();
         Task<List<AutoCompleteDataDto>> GetArticlesNamesByPartNameAsync(string partName);
+
+        Task<List<ArticleDto>> AggregateArticlesDataFromRssSourceAsync(SourceDto source,
+            CancellationToken cancellationToken);
+
+        Task AddArticlesAsync(IEnumerable<ArticleDto> articles);
+        //Task<string[]> GetContainsArticleUrlsBySourceAsync(int sourceId);
+        Task<List<ArticleDto>> GetFullContentArticlesAsync(List<ArticleDto> articlesDataFromRss);
     }
 }

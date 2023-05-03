@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
+
 namespace AspNetSamples.Mvc.Controllers
 {
     //[Authorize(Policy = "18+Content")]
@@ -181,7 +182,33 @@ namespace AspNetSamples.Mvc.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Aggregator()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> AggregateNews()
+        {
+            var sources = (await _sourceService.GetSourcesAsync())
+                .Where(s=>!string.IsNullOrEmpty(s.RssFeedUrl))
+                .ToArray();
+
+            foreach (var sourceDto in sources)
+            {
+                var articlesDataFromRss = (await _articleService
+                    .AggregateArticlesDataFromRssSourceAsync(sourceDto, CancellationToken.None));
+
+                var fullContentArticles = await _articleService.GetFullContentArticlesAsync(articlesDataFromRss);
+
+                await _articleService.AddArticlesAsync(fullContentArticles);
+            }
+
+            return Ok();
+        }
+
+        //todo move to mapper
         private ArticleDto Convert(CreateArticleModel model)
         {
             var dto = new ArticleDto()
@@ -193,5 +220,7 @@ namespace AspNetSamples.Mvc.Controllers
             };
             return dto;
         }
+
+        
     }
 }

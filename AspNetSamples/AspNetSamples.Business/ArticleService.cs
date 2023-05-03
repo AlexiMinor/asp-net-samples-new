@@ -1,9 +1,14 @@
-﻿using AspNetSamples.Abstractions;
+﻿using System.Collections.Concurrent;
+using System.Xml;
+using AspNetSamples.Abstractions;
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Core.DTOs;
 using AspNetSamples.Data.Entities;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.ServiceModel.Syndication;
+using HtmlAgilityPack;
+
 
 namespace AspNetSamples.Business
 {
@@ -29,6 +34,15 @@ namespace AspNetSamples.Business
         {
             var count = await _unitOfWork.Articles.CountAsync();
             return count;
+        }
+
+        private async Task<string[]> GetContainsArticleUrlsBySourceAsync(int sourceId)
+        {
+            var articleUrls = await _unitOfWork.Articles.GetAsQueryable()
+                .Where(article => article.SourceId.Equals(sourceId))
+                .Select(article => article.ArticleSourceUrl)
+                .ToArrayAsync();
+            return articleUrls;
         }
 
         //public IQueryable<Article> GetArticlesWithSourceNoTrackingAsQueryable()
@@ -111,12 +125,14 @@ namespace AspNetSamples.Business
             await _unitOfWork.SaveChangesAsync();
         }
 
-        //public async Task<int> AddArticlesAsync()
-        //{
-        //    var articlesForAdd = new List<Article>();
+        public async Task AddArticlesAsync(IEnumerable<ArticleDto> articles)
+        {
+            var entities = articles.Select(a => _mapper.Map<Article>(a)).ToArray();
 
-        //    //_unitOfWork.Articles.AddArticlesOptimizedWay()
-        //}
+            await _unitOfWork.Articles.AddRangeAsync(entities);
+            await _unitOfWork.SaveChangesAsync();
+
+        }
 
         public async Task AddArticleWithSourceAsync(
                 ArticleDto articleDto,
@@ -131,8 +147,76 @@ namespace AspNetSamples.Business
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task<List<ArticleDto>> AggregateArticlesDataFromRssSourceAsync(SourceDto source, CancellationToken cancellationToken)
+        {
+            var articles = new ConcurrentBag<ArticleDto>();
+            var urls = await GetContainsArticleUrlsBySourceAsync(source.Id);
+            using (var reader = XmlReader.Create(source.RssFeedUrl))
+            {
+                var feed = SyndicationFeed.Load(reader);
+
+                await Parallel.ForEachAsync(feed.Items
+                        .Where(item => !urls.Contains(item.Id)).ToArray(), cancellationToken,
+                    (item, token) => 
+                    {
+                            articles.Add(new ArticleDto()
+                            {
+                                ArticleSourceUrl = item.Id,
+                                SourceId = source.Id,
+                                SourceName = source.Name,
+                                Title = item.Title.Text,
+                                ShortDescription = item.Summary.Text
+                            });
+                            return ValueTask.CompletedTask;
+                    });
+
+               reader.Close();
+            }
+
+            return articles.ToList();
+        }
+
+        public async Task<List<ArticleDto>> GetFullContentArticlesAsync(List<ArticleDto> articlesDataFromRss)
+        {
+            var concBag = new ConcurrentBag<ArticleDto>();
+
+            await Parallel.ForEachAsync(articlesDataFromRss, async (dto, token) =>
+            {
+                var content = await GetArticleContentAsync(dto.ArticleSourceUrl);
+                dto.FullText = content;
+                concBag.Add(dto);
+            });
+            return concBag.ToList();
+        }
+
+        private async Task<string> GetArticleContentAsync(string url)
+        {
+            try
+            {
+                var web = new HtmlWeb();
+                var doc = web.Load(url);
+
+                var textNode = doc.DocumentNode.SelectSingleNode("//div[@class = 'news-text']");
+
+                //var nodesForDelete = textNode.SelectNodes("//div[@class = 'news-reference']");
+                
+                //if (nodesForDelete.Any())
+                //{
+                //    textNode.RemoveChildren(nodesForDelete);
+                //}
 
 
+                var content = textNode.InnerHtml;
 
+                return content;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+         
+        }
     }
 }
