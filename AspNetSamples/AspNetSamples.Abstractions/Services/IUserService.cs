@@ -1,4 +1,5 @@
-﻿using AspNetSamples.Core.DTOs;
+﻿using System.Security.Claims;
+using AspNetSamples.Core.DTOs;
 
 namespace AspNetSamples.Abstractions.Services
 {
@@ -9,5 +10,7 @@ namespace AspNetSamples.Abstractions.Services
         Task<bool> IsPasswordCorrectAsync(string modelEmail, string modelPassword);
         Task<UserDto?> GetUserByEmailAsync(string modelEmail);
         Task<List<UserDto>> GetUsersAsync();
+
+        Task<List<Claim>> GetUserClamsAsync(UserDto dto);
     }
 }

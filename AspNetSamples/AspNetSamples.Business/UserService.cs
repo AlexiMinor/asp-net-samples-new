@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AspNetSamples.Abstractions;
 using AspNetSamples.Abstractions.Services;
@@ -101,6 +102,24 @@ namespace AspNetSamples.Business
         {
             return await _unitOfWork.Users.GetAsQueryable().
                 Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
+        }
+
+        public async Task<List<Claim>> GetUserClamsAsync(UserDto user)
+        {
+            var role = await _roleService.GetUserRole(user.Id);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+            };
+            if (string.IsNullOrEmpty(role))
+            {
+                throw new ArgumentException("Incorrect user or role", nameof(user));
+            }
+            claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role));
+
+
+            return claims;
         }
 
 

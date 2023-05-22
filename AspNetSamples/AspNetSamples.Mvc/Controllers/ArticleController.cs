@@ -191,18 +191,26 @@ namespace AspNetSamples.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AggregateNews()
         {
-            var sources = (await _sourceService.GetSourcesAsync())
-                .Where(s=>!string.IsNullOrEmpty(s.RssFeedUrl))
-                .ToArray();
+            //var sources = (await _sourceService.GetSourcesAsync())
+            //    .Where(s=>!string.IsNullOrEmpty(s.RssFeedUrl))
+            //    .ToArray();
 
-            foreach (var sourceDto in sources)
+            //foreach (var sourceDto in sources)
+            //{
+            //    var articlesDataFromRss = (await _articleService
+            //        .AggregateArticlesDataFromRssSourceAsync(sourceDto, CancellationToken.None));
+
+            //    var fullContentArticles = await _articleService.GetFullContentArticlesAsync(articlesDataFromRss);
+
+            //    await _articleService.AddArticlesAsync(fullContentArticles);
+            //}
+
+            var unratedArticles = await _articleService.GetUnratedArticlesAsync();
+
+            foreach (var unratedArticle in unratedArticles)
             {
-                var articlesDataFromRss = (await _articleService
-                    .AggregateArticlesDataFromRssSourceAsync(sourceDto, CancellationToken.None));
-
-                var fullContentArticles = await _articleService.GetFullContentArticlesAsync(articlesDataFromRss);
-
-                await _articleService.AddArticlesAsync(fullContentArticles);
+                var rate = await _articleService.GetArticleRateAsync(unratedArticle.Id);
+                await _articleService.RateArticleAsync(unratedArticle.Id, rate);
             }
 
             return Ok();

@@ -121,17 +121,7 @@ namespace AspNetSamples.Mvc.Controllers
             try
             {
                 const string authType = "Application Cookie";
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Email),
-                };
-                var role = await _roleService.GetUserRole(dto.Id);
-                if (string.IsNullOrEmpty(role))
-                {
-                    throw new ArgumentException("Incorrect user or role", nameof(dto));
-                }
-                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role));
-
+                var claims = await _userService.GetUserClamsAsync(dto);
                 var identity = new ClaimsIdentity(claims,
                     authType,
                     ClaimsIdentity.DefaultNameClaimType,

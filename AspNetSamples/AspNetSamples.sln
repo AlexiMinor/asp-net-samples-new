@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSamples.Core", "AspNe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSamples.Repositories", "AspNetSamples.Reposiories\AspNetSamples.Repositories.csproj", "{4F6CD8B1-B341-4570-A94E-3299A03A4923}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSamples.WebAPI", "AspNetSamples.WebAPI\AspNetSamples.WebAPI.csproj", "{94E02E31-E926-4C66-9693-0DD249C798D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetSamples.Data.CQS", "AspNetSamples.Data.CQS\AspNetSamples.Data.CQS.csproj", "{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{4F6CD8B1-B341-4570-A94E-3299A03A4923}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F6CD8B1-B341-4570-A94E-3299A03A4923}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F6CD8B1-B341-4570-A94E-3299A03A4923}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94E02E31-E926-4C66-9693-0DD249C798D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94E02E31-E926-4C66-9693-0DD249C798D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94E02E31-E926-4C66-9693-0DD249C798D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94E02E31-E926-4C66-9693-0DD249C798D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

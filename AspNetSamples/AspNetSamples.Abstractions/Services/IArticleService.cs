@@ -19,5 +19,9 @@ namespace AspNetSamples.Abstractions.Services
         Task AddArticlesAsync(IEnumerable<ArticleDto> articles);
         //Task<string[]> GetContainsArticleUrlsBySourceAsync(int sourceId);
         Task<List<ArticleDto>> GetFullContentArticlesAsync(List<ArticleDto> articlesDataFromRss);
+
+        Task<double?> GetArticleRateAsync(int articleId);
+        Task<List<ArticleDto>> GetUnratedArticlesAsync();
+        Task RateArticleAsync(int id, double? rate);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Net.Http.Headers;
 using System.Xml;
 using AspNetSamples.Abstractions;
 using AspNetSamples.Abstractions.Services;
@@ -7,7 +8,13 @@ using AspNetSamples.Data.Entities;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.ServiceModel.Syndication;
+using System.Text;
+using System.Text.RegularExpressions;
+using AspNetSamples.Business.RateModels;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Configuration;
+using AspNetSamples.Data.Migrations;
+using Newtonsoft.Json;
 
 
 namespace AspNetSamples.Business
@@ -16,12 +23,14 @@ namespace AspNetSamples.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
         public ArticleService(IUnitOfWork unitOfWork, 
-            IMapper mapper)
+            IMapper mapper, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         //public async Task<List<ArticleDto>> GetArticlesWithSourceAsync()
@@ -102,12 +111,20 @@ namespace AspNetSamples.Business
         //    return await _unitOfWork.SaveChangesAsync();
         //}
 
-        //public async Task<Task<ArticleDto?>> GetArticleByIdAsync(int id)
-        //{
-        //    var article = _articleRepository.GetArticleByIdAsync(id);
+        public async Task RateArticleAsync(int id, double? rate)
+        {
+            await _unitOfWork.Articles.PatchAsync(id, new List<PatchDto>()
+            {
+                new PatchDto()
+                {
+                    PropertyName = nameof(ArticleDto.Rate),
+                    PropertyValue = rate
+                }
+            });
 
-        //    return article;
-        //}
+            await _unitOfWork.SaveChangesAsync();
+
+        }
 
         public async Task<ArticleDto?> GetArticleByIdWithSourceNameAsync(int id)
         {
@@ -187,6 +204,88 @@ namespace AspNetSamples.Business
                 concBag.Add(dto);
             });
             return concBag.ToList();
+        }
+
+        public async Task<double?> GetArticleRateAsync(int articleId)
+        {
+            var articleText = (await _unitOfWork.Articles.GetByIdAsync(articleId))?.FullText;
+
+
+            if (string.IsNullOrEmpty(articleText))
+            {
+                throw new ArgumentException("Article or article text doesn't exist",
+                    nameof(articleId));
+            }
+            else
+            {
+                Dictionary<string, int>? dictionary;
+                using (var jsonReader = new StreamReader(@"C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Mvc\AFINN-ru.json"))
+                {
+                    var jsonDict = await jsonReader.ReadToEndAsync();
+                    dictionary = JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonDict);
+                }
+                
+                articleText = PrepareText(articleText);
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient
+                        .DefaultRequestHeaders
+                        .Accept
+                        .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                    var request = new HttpRequestMessage(HttpMethod.Post,
+                        "http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=15031bb039d704a3af5d07194f427aa3bf297058")
+                    {
+                        Content = new StringContent("[{\"text\":\"" + articleText + "\"}]",
+                            Encoding.UTF8, "application/json")
+                    };
+
+                    request.Content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/json");
+
+                    var response = await httpClient.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        var lemmas = JsonConvert.DeserializeObject<Root[]>(responseString)
+                            .SelectMany(root => root.Annotations.Lemma).Select(lemma => lemma.Value).ToArray();
+
+                        if (lemmas.Any())
+                        {
+                            var totalRate = lemmas
+                                .Where(lemma => dictionary.ContainsKey(lemma))
+                                .Aggregate<string, double>(0, (current, lemma) 
+                                    => current + dictionary[lemma]);
+
+                            totalRate = totalRate / lemmas.Count();
+                            return totalRate;
+                        }
+                    }
+                    
+                }
+                return null;
+            }
+        }
+
+        private string? PrepareText(string articleText)
+        {
+            articleText = articleText.Trim();
+
+            articleText = Regex.Replace(articleText, "<.*?>", string.Empty);
+            return articleText;
+        }
+
+        public async Task<List<ArticleDto>> GetUnratedArticlesAsync()
+        {
+            var unratedArticles = await _unitOfWork.Articles
+                .GetAsQueryable()
+                .AsNoTracking()
+                .Where(article => article.Rate == null)
+                .Select(article => _mapper.Map<ArticleDto>(article))
+                .ToListAsync();
+
+            return unratedArticles;
         }
 
         private async Task<string> GetArticleContentAsync(string url)

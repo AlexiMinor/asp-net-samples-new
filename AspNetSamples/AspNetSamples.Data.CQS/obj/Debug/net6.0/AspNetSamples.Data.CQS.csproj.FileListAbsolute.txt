@@ -1,0 +1,17 @@
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Data.CQS.deps.json
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Data.CQS.dll
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Data.CQS.pdb
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.csproj.AssemblyReference.cache
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.AssemblyInfoInputs.cache
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.AssemblyInfo.cs
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.csproj.CoreCompileInputs.cache
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.dll
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\refint\AspNetSamples.Data.CQS.dll
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.pdb
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\ref\AspNetSamples.Data.CQS.dll
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Core.dll
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Data.dll
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Data.pdb
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\bin\Debug\net6.0\AspNetSamples.Core.pdb
+C:\Users\AlexiMinor\Desktop\asp-samples\asp-net-samples-new\AspNetSamples\AspNetSamples.Data.CQS\obj\Debug\net6.0\AspNetSamples.Data.CQS.csproj.CopyComplete
