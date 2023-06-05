@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Qt9/ndX2/uEOgMFPFaWBRMgDVL+B5V+Pgxf9R3pMPpHBo3TIxLFRu30JQYmNPppylDk3BnOKy4K8+YF7TdNtbw==",
+  "dgSpecHash": "UuYGcRU4JWdxlxUzQVPYgc+e6M+pF6SPwts8hd/sfbo8uqvjZ8oRAQiCWvzTP69Fszn59YL3ATm52IBomHMbvg==",
   "success": true,
   "projectFilePath": "C:\\Users\\AlexiMinor\\Desktop\\asp-samples\\asp-net-samples-new\\AspNetSamples\\AspNetSamples.WebAPI\\AspNetSamples.WebAPI.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,10 @@
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
+    "C:\\Users\\AlexiMinor\\.nuget\\packages\\hangfire.aspnetcore\\1.8.2\\hangfire.aspnetcore.1.8.2.nupkg.sha512",
+    "C:\\Users\\AlexiMinor\\.nuget\\packages\\hangfire.core\\1.8.2\\hangfire.core.1.8.2.nupkg.sha512",
+    "C:\\Users\\AlexiMinor\\.nuget\\packages\\hangfire.netcore\\1.8.2\\hangfire.netcore.1.8.2.nupkg.sha512",
+    "C:\\Users\\AlexiMinor\\.nuget\\packages\\hangfire.sqlserver\\1.8.2\\hangfire.sqlserver.1.8.2.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\htmlagilitypack\\1.11.46\\htmlagilitypack.1.11.46.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\mediatr\\12.0.1\\mediatr.12.0.1.nupkg.sha512",
@@ -30,6 +34,8 @@
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.dependencymodel\\7.0.0\\microsoft.extensions.dependencymodel.7.0.0.nupkg.sha512",
+    "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\3.0.0\\microsoft.extensions.fileproviders.abstractions.3.0.0.nupkg.sha512",
+    "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\3.0.0\\microsoft.extensions.hosting.abstractions.3.0.0.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.logging\\7.0.0\\microsoft.extensions.logging.7.0.0.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.0\\microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\AlexiMinor\\.nuget\\packages\\microsoft.extensions.options\\7.0.0\\microsoft.extensions.options.7.0.0.nupkg.sha512",

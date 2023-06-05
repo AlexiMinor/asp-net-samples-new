@@ -23,5 +23,6 @@ namespace AspNetSamples.Abstractions.Services
         Task<double?> GetArticleRateAsync(int articleId);
         Task<List<ArticleDto>> GetUnratedArticlesAsync();
         Task RateArticleAsync(int id, double? rate);
+        Task AggregateArticlesDataFromRssAsync(CancellationToken cancellationToken);
     }
 }

@@ -4,10 +4,12 @@ using AspNetSamples.Abstractions.Data.Repositories;
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Abstractions;
 using AspNetSamples.Business;
+using AspNetSamples.Core.DTOs;
 using AspNetSamples.Data.Entities;
 using AspNetSamples.Data;
 using AspNetSamples.Data.CQS.QueriesHandlers;
 using AspNetSamples.Repositories;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -70,6 +72,14 @@ namespace AspNetSamples.WebAPI
 
             builder.Services.AddAutoMapper(typeof(Program));
 
+            builder.Services.AddHangfire(config=>
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddHangfireServer();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -89,6 +99,9 @@ namespace AspNetSamples.WebAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseHangfireDashboard();
+
 
             app.UseAuthentication();
             app.UseAuthorization();

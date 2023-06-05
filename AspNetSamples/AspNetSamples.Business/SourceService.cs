@@ -1,9 +1,12 @@
 ﻿using AspNetSamples.Abstractions;
 using AspNetSamples.Abstractions.Services;
 using AspNetSamples.Core.DTOs;
+using AspNetSamples.Data.CQS.Queries;
 using AspNetSamples.Data.Entities;
 using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace AspNetSamples.Business
 {
@@ -11,18 +14,24 @@ namespace AspNetSamples.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public SourceService(IUnitOfWork unitOfWork, IMapper mapper)
+
+        private readonly IMediator _mediator;
+        private readonly IConfiguration _configuration;
+
+        public SourceService(IUnitOfWork unitOfWork, IMapper mapper, IMediator mediator, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _mediator = mediator;
+            _configuration = configuration;
         }
 
         public async Task<List<SourceDto>> GetSourcesAsync()
         {
-            return await _unitOfWork.Sources
-                .GetAsQueryable()
-                .Select(source => _mapper.Map<SourceDto>(source))
-                .ToListAsync();
+
+            var sources = await _mediator.Send(new GetAllSourcesQuery());
+
+            return sources;
         }
 
         public async Task<SourceDto?> GetSourceIdsAsync(int id)

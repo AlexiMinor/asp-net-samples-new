@@ -11,9 +11,11 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Text.RegularExpressions;
 using AspNetSamples.Business.RateModels;
+using AspNetSamples.Data.CQS.Commands;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using AspNetSamples.Data.Migrations;
+using MediatR;
 using Newtonsoft.Json;
 
 
@@ -24,13 +26,18 @@ namespace AspNetSamples.Business
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly ISourceService _sourceService;
+        private readonly IMediator _mediator;
+
 
         public ArticleService(IUnitOfWork unitOfWork, 
-            IMapper mapper, IConfiguration configuration)
+            IMapper mapper, IConfiguration configuration, ISourceService sourceService, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configuration = configuration;
+            _sourceService = sourceService;
+            _mediator = mediator;
         }
 
         //public async Task<List<ArticleDto>> GetArticlesWithSourceAsync()
@@ -162,6 +169,42 @@ namespace AspNetSamples.Business
             await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(articleDto));
 
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task AggregateArticlesDataFromRssAsync(CancellationToken cancellationToken)
+        {
+            var sources = await _sourceService.GetSourcesAsync();
+            var articles = new ConcurrentBag<ArticleDto>();
+
+            Parallel.ForEach(sources, async source =>
+            {
+               
+                var urls = await GetContainsArticleUrlsBySourceAsync(source.Id);
+                using (var reader = XmlReader.Create(source.RssFeedUrl))
+                {
+                    var feed = SyndicationFeed.Load(reader);
+
+                    await Parallel.ForEachAsync(feed.Items
+                            .Where(item => !urls.Contains(item.Id)).ToArray(), cancellationToken,
+                        (item, token) =>
+                        {
+                            articles.Add(new ArticleDto()
+                            {
+                                ArticleSourceUrl = item.Id,
+                                SourceId = source.Id,
+                                SourceName = source.Name,
+                                Title = item.Title.Text,
+                                ShortDescription = item.Summary.Text
+                            });
+                            return ValueTask.CompletedTask;
+                        });
+
+                    reader.Close();
+                }
+            });
+
+            await _mediator.Send(new AddArticlesCommand { Articles = articles }, cancellationToken);
+
         }
 
         public async Task<List<ArticleDto>> AggregateArticlesDataFromRssSourceAsync(SourceDto source, CancellationToken cancellationToken)

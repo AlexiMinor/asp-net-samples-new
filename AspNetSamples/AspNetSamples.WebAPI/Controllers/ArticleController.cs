@@ -4,6 +4,7 @@ using AspNetSamples.Data.Entities;
 using AspNetSamples.WebAPI.Requests;
 using AspNetSamples.WebAPI.Responses;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,7 @@ namespace AspNetSamples.WebAPI.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetData()
         {
+          
             return Ok();
         }
 
