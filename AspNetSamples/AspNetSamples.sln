@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSamples.Repositories"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSamples.WebAPI", "AspNetSamples.WebAPI\AspNetSamples.WebAPI.csproj", "{94E02E31-E926-4C66-9693-0DD249C798D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetSamples.Data.CQS", "AspNetSamples.Data.CQS\AspNetSamples.Data.CQS.csproj", "{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSamples.Data.CQS", "AspNetSamples.Data.CQS\AspNetSamples.Data.CQS.csproj", "{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAE84D56-8F57-4591-85F3-27D2EC36AD33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetSamples.Business.Tests", "AspNetSamples.Business.Tests\AspNetSamples.Business.Tests.csproj", "{F6AD0E37-B12A-44B7-A377-354E4447103D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,9 +61,16 @@ Global
 		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0621BDF5-32C4-48C1-8804-EAFB0C6E61C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6AD0E37-B12A-44B7-A377-354E4447103D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6AD0E37-B12A-44B7-A377-354E4447103D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6AD0E37-B12A-44B7-A377-354E4447103D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6AD0E37-B12A-44B7-A377-354E4447103D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F6AD0E37-B12A-44B7-A377-354E4447103D} = {CAE84D56-8F57-4591-85F3-27D2EC36AD33}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE4EF2F9-C692-4D15-8936-C1CF723ECBC6}

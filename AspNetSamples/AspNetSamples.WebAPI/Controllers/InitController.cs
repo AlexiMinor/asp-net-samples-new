@@ -30,6 +30,11 @@ namespace AspNetSamples.WebAPI.Controllers
                 "0,20,40 * * * *");
 
 
+            RecurringJob.AddOrUpdate(
+                "UpdateArticleText",
+                () => _articleService.AddFullContentForArticlesAsync(new CancellationToken()),
+                "0,30 * * * *");
+
 
             return Ok();
         }

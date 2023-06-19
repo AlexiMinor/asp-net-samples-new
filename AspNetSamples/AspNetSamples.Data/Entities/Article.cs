@@ -7,7 +7,7 @@ public class Article : IBaseEntity
     public int Id { get; set; }
     public string Title { get; set; }
     public string ShortDescription { get; set; }
-    public string FullText { get; set; }
+    public string? FullText { get; set; }
     public double? Rate { get; set;}
 
     public string ArticleSourceUrl { get; set; }

@@ -26,3 +26,5 @@ AspNetSamples/AspNetSamples.Business/obj/
 /AspNetSamples/AspNetSamples.Reposiories/bin/Debug/net6.0
 /AspNetSamples/AspNetSamples.Reposiories/obj
 /AspNetSamples/AspNetSamples.Core/bin/Debug/net6.0
+/AspNetSamples/AspNetSamples.Business.Tests/bin/Debug/net6.0
+/AspNetSamples/AspNetSamples.Business.Tests/obj

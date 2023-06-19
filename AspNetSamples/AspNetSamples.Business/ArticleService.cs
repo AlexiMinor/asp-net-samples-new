@@ -12,10 +12,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AspNetSamples.Business.RateModels;
 using AspNetSamples.Data.CQS.Commands;
+using AspNetSamples.Data.CQS.Queries;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
-using AspNetSamples.Data.Migrations;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 
@@ -29,9 +30,11 @@ namespace AspNetSamples.Business
         private readonly ISourceService _sourceService;
         private readonly IMediator _mediator;
 
-
         public ArticleService(IUnitOfWork unitOfWork, 
-            IMapper mapper, IConfiguration configuration, ISourceService sourceService, IMediator mediator)
+            IMapper mapper, 
+            IConfiguration configuration, 
+            ISourceService sourceService, 
+            IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -40,22 +43,15 @@ namespace AspNetSamples.Business
             _mediator = mediator;
         }
 
-        //public async Task<List<ArticleDto>> GetArticlesWithSourceAsync()
-        //{
-        //    var articles = await _articleRepository.GetArticlesAsync();
-        //    return articles;
-        //}
-
         public async Task<int> GetTotalArticlesCountAsync()
         {
             var count = await _unitOfWork.Articles.CountAsync();
             return count;
         }
 
-        private async Task<string[]> GetContainsArticleUrlsBySourceAsync(int sourceId)
+        private async Task<string[]> GetContainsArticleUrlsBySourceAsync()
         {
             var articleUrls = await _unitOfWork.Articles.GetAsQueryable()
-                .Where(article => article.SourceId.Equals(sourceId))
                 .Select(article => article.ArticleSourceUrl)
                 .ToArrayAsync();
             return articleUrls;
@@ -74,16 +70,26 @@ namespace AspNetSamples.Business
         {
             try
             {
-                var articles = (await _unitOfWork
-                        .Articles
-                        .GetArticlesByPageAsync(page, pageSize))
-                    .Select(article => _mapper.Map<ArticleDto>(article))
-                    .ToList();
+                if (page >=0 && pageSize>=1)
+                {
+                    var articles = (await _unitOfWork
+                            .Articles
+                            .GetArticlesByPageAsync(page, pageSize))
+                        .Select(article => _mapper.Map<ArticleDto>(article))
+                        .ToList();
 
-                //var x = 0;
-                //var z = 15 / x;
+                    //var x = 0;
+                    //var z = 15 / x;
 
-                return articles;
+                    return articles;
+                }
+
+                throw new ArgumentException("Invalid page or pageSize");
+            }
+            catch (ArgumentException e)
+            {
+                //_logger.LogWarning(e.Message);   
+                throw;
             }
             catch (Exception e)
             {
@@ -175,11 +181,9 @@ namespace AspNetSamples.Business
         {
             var sources = await _sourceService.GetSourcesAsync();
             var articles = new ConcurrentBag<ArticleDto>();
-
+            var urls = await GetContainsArticleUrlsBySourceAsync();
             Parallel.ForEach(sources, async source =>
             {
-               
-                var urls = await GetContainsArticleUrlsBySourceAsync(source.Id);
                 using (var reader = XmlReader.Create(source.RssFeedUrl))
                 {
                     var feed = SyndicationFeed.Load(reader);
@@ -200,6 +204,7 @@ namespace AspNetSamples.Business
                         });
 
                     reader.Close();
+
                 }
             });
 
@@ -207,33 +212,20 @@ namespace AspNetSamples.Business
 
         }
 
-        public async Task<List<ArticleDto>> AggregateArticlesDataFromRssSourceAsync(SourceDto source, CancellationToken cancellationToken)
+        public async Task AddFullContentForArticlesAsync(CancellationToken cancellationToken)
         {
-            var articles = new ConcurrentBag<ArticleDto>();
-            var urls = await GetContainsArticleUrlsBySourceAsync(source.Id);
-            using (var reader = XmlReader.Create(source.RssFeedUrl))
+            var articlesWithoutContent = await _mediator.Send(new GetAllArticlesWithoutContentQuery());
+
+            var concBag = new ConcurrentBag<ArticleDto>();
+
+            await Parallel.ForEachAsync(articlesWithoutContent, async (dto, token) =>
             {
-                var feed = SyndicationFeed.Load(reader);
+                var content = await GetArticleContentAsync(dto.ArticleSourceUrl);
+                dto.FullText = content;
+                concBag.Add(dto);
+            });
 
-                await Parallel.ForEachAsync(feed.Items
-                        .Where(item => !urls.Contains(item.Id)).ToArray(), cancellationToken,
-                    (item, token) => 
-                    {
-                            articles.Add(new ArticleDto()
-                            {
-                                ArticleSourceUrl = item.Id,
-                                SourceId = source.Id,
-                                SourceName = source.Name,
-                                Title = item.Title.Text,
-                                ShortDescription = item.Summary.Text
-                            });
-                            return ValueTask.CompletedTask;
-                    });
-
-               reader.Close();
-            }
-
-            return articles.ToList();
+            await _mediator.Send(new AddArticlesFullContentCommand() { Articles = concBag });
         }
 
         public async Task<List<ArticleDto>> GetFullContentArticlesAsync(List<ArticleDto> articlesDataFromRss)
@@ -340,16 +332,8 @@ namespace AspNetSamples.Business
 
                 var textNode = doc.DocumentNode.SelectSingleNode("//div[@class = 'news-text']");
 
-                //var nodesForDelete = textNode.SelectNodes("//div[@class = 'news-reference']");
-                
-                //if (nodesForDelete.Any())
-                //{
-                //    textNode.RemoveChildren(nodesForDelete);
-                //}
-
-
                 var content = textNode.InnerHtml;
-
+                
                 return content;
 
             }

@@ -13,8 +13,8 @@ namespace AspNetSamples.Abstractions.Services
         //Task<int> AddArticleWithNewSourceAsync();
         Task<List<AutoCompleteDataDto>> GetArticlesNamesByPartNameAsync(string partName);
 
-        Task<List<ArticleDto>> AggregateArticlesDataFromRssSourceAsync(SourceDto source,
-            CancellationToken cancellationToken);
+        //Task<List<ArticleDto>> AggregateArticlesDataFromRssSourceAsync(SourceDto source,
+        //    CancellationToken cancellationToken);
 
         Task AddArticlesAsync(IEnumerable<ArticleDto> articles);
         //Task<string[]> GetContainsArticleUrlsBySourceAsync(int sourceId);
@@ -24,5 +24,6 @@ namespace AspNetSamples.Abstractions.Services
         Task<List<ArticleDto>> GetUnratedArticlesAsync();
         Task RateArticleAsync(int id, double? rate);
         Task AggregateArticlesDataFromRssAsync(CancellationToken cancellationToken);
+        Task AddFullContentForArticlesAsync(CancellationToken cancellationToken);
     }
 }

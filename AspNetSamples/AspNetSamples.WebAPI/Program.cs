@@ -10,6 +10,7 @@ using AspNetSamples.Data;
 using AspNetSamples.Data.CQS.QueriesHandlers;
 using AspNetSamples.Repositories;
 using Hangfire;
+using Hangfire.Logging.LogProviders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -60,6 +61,7 @@ namespace AspNetSamples.WebAPI
 
             builder.Services.AddTransient<IArticleService, ArticleService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
+            
             builder.Services.AddTransient<IRoleService, RoleService>();
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<IUserService, UserService>();
